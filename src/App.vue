@@ -4,9 +4,11 @@
       <router-link to="/">Home</router-link> |
       <router-link to="/about">About</router-link>
     </div>
+
     <router-view/>
   </div>
 </template>
+
 
 <style lang="scss">
 #app {
@@ -15,6 +17,7 @@
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
   color: #2c3e50;
+  min-width: 1000px; // 安全宽度
 }
 
 #nav {
