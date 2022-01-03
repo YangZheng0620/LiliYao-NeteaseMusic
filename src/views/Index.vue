@@ -1,5 +1,17 @@
 <template>
   <div class="index">
-    <h1>This is an Index page</h1>
+    <Banner></Banner>
+
   </div>
 </template>
+
+<script>
+import Banner from '@/components/Banner'
+
+export default {
+  name: 'Index',
+  components: {
+    Banner,
+  }
+}
+</script>

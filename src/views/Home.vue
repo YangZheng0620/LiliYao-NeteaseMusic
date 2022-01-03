@@ -1,7 +1,7 @@
 <template>
   <div class="home">
     <nav-header></nav-header>
-    <img alt="Vue logo" src="../assets/logo.png">
+<!--    <img alt="Vue logo" src="../assets/logo.png">-->
     <router-view></router-view>
     <Login></Login>
   </div>
@@ -18,7 +18,7 @@ export default {
   components: {
     NavHeader,
     HelloWorld,
-    Login
+    Login,
   }
 }
 </script>

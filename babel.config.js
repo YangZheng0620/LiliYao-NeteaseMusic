@@ -7,5 +7,11 @@ module.exports = {
           "libraryName": "view-design",
           "libraryDirectory": "src/components"
         }
+  ],[
+      "component",
+      {
+          "libraryName": "element-ui",
+          "styleLibraryName": "theme-chalk"
+      }
   ]],
 }

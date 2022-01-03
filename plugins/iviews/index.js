@@ -1,6 +1,6 @@
 import { Row, Col, Input, Dropdown, DropdownMenu,
     DropdownItem, Icon, Avatar, Badge, Button,
-    Modal, Form, FormItem} from 'view-design';
+    Modal, Form, FormItem, Carousel, CarouselItem} from 'view-design';
 
 const elements = [
     Row,
@@ -15,7 +15,9 @@ const elements = [
     Button,
     Modal,
     Form,
-    FormItem
+    FormItem,
+    Carousel,
+    CarouselItem
 ]
 
 const iviews= {
