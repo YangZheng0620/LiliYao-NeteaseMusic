@@ -1,7 +1,9 @@
+import Vue from 'vue'
 import 'element-ui/lib/theme-chalk/index.css';
 import { Row, Col, Input, Dropdown, DropdownMenu,
     DropdownItem, Icon, Avatar, Badge, Button, Dialog,
-    Form, FormItem, Carousel, CarouselItem } from 'element-ui';
+    Form, FormItem, Carousel, CarouselItem, Notification,
+    Image, } from 'element-ui';
 
 const components = [
     Row,
@@ -18,7 +20,8 @@ const components = [
     Form,
     FormItem,
     Carousel,
-    CarouselItem
+    CarouselItem,
+    Image
 ]
 
 const elements= {
@@ -29,5 +32,7 @@ const elements= {
         })
     }
 }
+
+Vue.prototype.$notify = Notification;
 
 export default elements;

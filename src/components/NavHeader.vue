@@ -23,21 +23,23 @@
         <el-input prefix-icon="el-icon-search" placeholder="请输入歌名、歌词、歌手或专辑" />
       </el-col>
       <!-- 登录按钮 -->
-      <el-col :span="2" class-name="userAvator">
+      <el-col :span="2" class="user-avatar">
         <div class="logined" v-if="isLogin">
-          <el-dropdown placement="top-start">
+          <el-dropdown placement="bottom-start" @command="userMenuHandler">
             <a href="javascript:void(0)">
               <el-badge :value="200" :max="99">
+<!--                <el-image :src="userInfo.avatarUrl" lazy class="avatar"></el-image>-->
                 <el-avatar shape="circle" size="medium"
-                src="http://p3.music.126.net/N5bF7cT03c_0dDTLVG1JbQ==/109951166860679554.jpg?param=30y30" />
+                 :src="userInfo.avatarUrl"/>
               </el-badge>
             </a>
             <el-dropdown-menu slot="dropdown">
+              <el-dropdown-item class="userNickname">{{userInfo.nickname}}</el-dropdown-item>
               <el-dropdown-item><i class="el-icon-user-solid"></i> 我的主页</el-dropdown-item>
               <el-dropdown-item><i class="el-icon-chat-dot-round"></i> 我的消息</el-dropdown-item>
               <el-dropdown-item><i class="el-icon-medal"></i> 我的等级</el-dropdown-item>
               <el-dropdown-item><i class="el-icon-setting"></i> 个人设置</el-dropdown-item>
-              <el-dropdown-item><i class="el-icon-switch-button"></i> 退出</el-dropdown-item>
+              <el-dropdown-item command="quit"><i class="el-icon-switch-button"></i> 退出</el-dropdown-item>
             </el-dropdown-menu>
           </el-dropdown>
 
@@ -50,7 +52,8 @@
 </template>
 
 <script>
-import {mapMutations} from 'vuex'
+import { mapMutations, mapGetters } from 'vuex'
+import { logout } from '/apis/api'
 
 export default {
   name: 'nav-header',
@@ -59,7 +62,7 @@ export default {
   },
   data() {
     return {
-      isLogin: false,
+      // isLogin: true,
       navMenuList: [
         {
           id: 1,
@@ -92,11 +95,66 @@ export default {
 
   },
   methods: {
-    ...mapMutations(['setLoginDialog']),
+    ...mapMutations(['setLoginDialog', 'setLogin', 'setUserInfo']),
     loginDialog() {
       this.setLoginDialog(true)
     },
-  }
+    // 顶部头像下拉菜单
+    userMenuHandler (type) {
+      switch (type) {
+        case 'home' :
+          this.$router.push({
+            name: 'homePage'
+          })
+          break
+        case 'grade' :
+          this.$router.push({
+            name: 'grade'
+          })
+          break
+        case 'set':
+          this.$router.push({
+            name: 'setting'
+          })
+          break
+        case 'quit':
+          this.logout()
+          break
+      }
+    },
+    // 退出登录
+    async logout () {
+      const { data: res } = await logout();
+
+      if (res.code !== 200) {
+        this.$notify.error({
+          title: '错误',
+          message: '数据请求失败'
+        });
+      }
+
+      this.$notify({
+        message: '退出成功',
+        type: 'success'
+      });
+
+      // 删除存储在本地的用户信息
+      window.sessionStorage.removeItem('isLogin')
+      window.sessionStorage.removeItem('token')
+      window.sessionStorage.removeItem('cookie')
+      window.sessionStorage.removeItem('userInfo')
+
+      this.setLogin(false)
+      this.setUserInfo() // 删除用户详情信息
+
+      // if (this.$route.path.indexOf('/my') >= 0) {
+      //   this.$router.push({ path: '/' })
+      // }
+    },
+  },
+  computed: {
+    ...mapGetters(['isLogin', 'userInfo'])
+  },
 }
 </script>
 
@@ -177,6 +235,14 @@ export default {
   border-radius: 50px;
 }
 
+// 下拉菜单中的用户名字
+.userNickname {
+  text-align: center;
+  font-weight: bold;
+  color: white;
+}
+
+
 // 登录按钮激活
 .loginBtn{
   &.ivu-btn-default:hover {
@@ -190,12 +256,33 @@ export default {
   background-image: linear-gradient(135deg,
       rgba(139, 198, 236, 0.5) 0%, rgba(149, 153, 226, 0.5) 100%);
 
+  // 下拉菜单位置
+  position: absolute;
+  top: 130px !important;
 }
 
 // 下拉菜单中分割线
-.el-dropdown-menu {
-  /deep/ .el-dropdown-menu__item--divided:before {
+//.el-dropdown-menu {
+//  /deep/ .el-dropdown-menu__item--divided:before {
+//  }
+//}
+
+.user-avatar {
+  text-align: center;
+
+  .avatar {
+    display: inline-block;
+    width: 40px;
+    height: 40px;
+    border-radius: 100%;
+    overflow: hidden;
+    cursor: pointer;
   }
+
+  //.el-dropdown {
+  //  padding: 20px 0;
+  //  font-size: 0;
+  //}
 }
 
 </style>

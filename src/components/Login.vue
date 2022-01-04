@@ -8,6 +8,7 @@
         :modal="true"
         width="400px"
         :close-on-click-modal="false"
+        @close="clearLoginForm"
     class="demo">
       <div slot="title" style="color:#f60;text-align:center">
         <router-link to="/index" active-class="is-active">
@@ -18,19 +19,19 @@
         </router-link>
       </div>
       <div class="loginModalBody" style="text-align:center">
-        <el-form class="loginModalForm" ref="formInline" :model="formInline" :rules="ruleInline">
-          <el-form-item prop="user">
-            <el-input prefix-icon="el-icon-user" type="text" v-model="formInline.user" placeholder="请输入网易云账号">
+        <el-form class="loginModalForm" ref="loginFormRef" :model="loginForm" :rules="loginFormRules">
+          <el-form-item prop="phone">
+            <el-input prefix-icon="el-icon-user" type="text" v-model="loginForm.phone" placeholder="请输入网易云账号">
             </el-input>
           </el-form-item>
           <el-form-item prop="password">
-            <el-input prefix-icon="el-icon-lock" type="password" v-model="formInline.password" placeholder="请输入密码">
+            <el-input prefix-icon="el-icon-lock" type="password" v-model="loginForm.password" placeholder="请输入密码">
             </el-input>
           </el-form-item>
         </el-form>
       </div>
       <div slot="footer" class="footerBtn">
-        <el-button type="default" size="large" round>登录</el-button>
+        <el-button type="default" size="large" round @click="submitForm">登录</el-button>
       </div>
     </el-dialog>
   </div>
@@ -38,6 +39,7 @@
 
 <script>
 import { mapState, mapMutations } from 'vuex'
+import { login, getUserInfo } from '/apis/api'
 
 export default {
   name: 'login',
@@ -46,23 +48,86 @@ export default {
   },
   data() {
     return {
-      formInline: {
-        user: '',
+      // 登录所需账号密码
+      loginForm: {
+        phone: '',
         password: ''
       },
-      ruleInline: {
-        user: [
-          { required: true, message: 'Please fill in the user name', trigger: 'blur' }
+      // 账号密码所需的校验规则
+      loginFormRules: {
+        phone: [
+          { required: true, message: '请输入绑定网易云的手机号码', trigger: 'blur' }
         ],
         password: [
-          { required: true, message: 'Please fill in the password.', trigger: 'blur' },
+          { required: true, message: '请输入网易云密码', trigger: 'blur' },
           { type: 'string', min: 6, message: 'The password length cannot be less than 6 bits', trigger: 'blur' }
         ]
       }
     }
   },
   methods: {
-    ...mapMutations(['setLoginDialog']),
+    ...mapMutations(['setLoginDialog', 'setLogin', 'setUserInfo']),
+    // 提交账号密码
+    submitForm() {
+      this.$refs.loginFormRef.validate(async (valid) => {
+        // 前端校验通过后发送账号密码
+        if (valid) {
+
+          const { phone, password } = this.loginForm
+          const params = {
+            phone: phone,
+            password: password
+          };
+
+          let res = await login(params);
+
+          if (res.status !== 200) {
+            this.$notify.error({
+              title: '错误',
+              message: '数据请求失败'
+            });
+
+            // 请求成功后将数据保存到 localStorage
+          } else {
+            this.getUserInfo(res.data.profile.userId)
+            // 存储 token 和 cookie 信息，将登录标记为 true
+            window.sessionStorage.setItem('token', res.data.token)
+            window.sessionStorage.setItem('cookie', res.data.cookie)
+            window.sessionStorage.setItem('isLogin', true)
+            // 关闭登录窗口
+            this.setLoginDialog(false)
+          }
+        } else {
+          alert('error submit')
+        }
+      })
+    },
+    // 获取用户详情信息
+    async getUserInfo(uid) {
+      const params = {
+        uid: uid,
+      };
+
+      let res = await getUserInfo(params);
+
+      if (res.status !== 200) {
+        this.$notify.error({
+          title: '错误',
+          message: '数据请求失败'
+        });
+        // 请求成功后将数据保存到 localStorage
+      } else {
+        // 存储用户详情到 localStorage
+        window.sessionStorage.setItem('userInfo', JSON.stringify(res.data.profile))
+        this.setLogin(true)
+        this.setUserInfo(res.data.profile)
+      }
+    },
+    // 清除表单中的账号密码
+    clearLoginForm() {
+      this.loginForm.phone = ''
+      this.loginForm.password = ''
+    },
   },
   computed: {
     ...mapState(['loginDialogVisible']),

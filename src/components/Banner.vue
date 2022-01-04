@@ -1,6 +1,6 @@
 <template>
   <div class="banner">
-    <el-carousel :interval="6000" type="card" height="300px">
+    <el-carousel :interval="6000" type="card" height="300px" trigger="click">
       <el-carousel-item v-for="banner in banners" :key="banner.imageUrl">
         <img :src="banner.imageUrl">
       </el-carousel-item>
@@ -74,10 +74,15 @@ export default {
     .el-carousel__item:nth-child(2n+1) {
       background-color: #d3dce6;
     }
-  }
 
+
+  }
 
 }
 
+// 轮播图指示器按钮颜色
+/deep/ .el-carousel__button {
+  background-color: rgb(194, 12, 12);
+}
 
 </style>
