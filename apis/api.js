@@ -22,7 +22,7 @@ const login = params => {
 const getUserInfo = params => {
     return instance({
         url: '/user/detail',
-        method: 'get',
+        method: 'GET',
         params: params
     })
 }
@@ -31,7 +31,25 @@ const getUserInfo = params => {
 const logout = () => {
     return instance({
         url: '/logout',
-        method: 'get',
+        method: 'GET',
+    })
+}
+
+
+// 获取歌单
+const playlist = (params) => {
+    return instance({
+        url: '/top/playlist',
+        method: 'GET',
+        params: params
+    })
+}
+
+// 获取热门歌单分类
+const hotplaylist = () => {
+    return instance({
+        url: '/playlist/hot',
+        method: 'GET',
     })
 }
 
@@ -39,5 +57,7 @@ export {
     getBanner,
     login,
     getUserInfo,
-    logout
+    logout,
+    playlist,
+    hotplaylist
 }

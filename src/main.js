@@ -6,6 +6,7 @@ import store from './store'
 import iviews from '../plugins/iviews/index'
 import 'view-design/dist/styles/iview.css'
 import elements from '../plugins/elements/index'
+import utils from '../utils/utils'
 
 Vue.config.productionTip = false
 
@@ -15,6 +16,8 @@ Vue.use(VueRouter)
 Vue.use(elements)
 // Vue.component('el-carousel', Carousel);
 // Vue.component('el-carousel-item', CarouselItem);
+
+Vue.prototype.$utils = utils
 
 new Vue({
   router,

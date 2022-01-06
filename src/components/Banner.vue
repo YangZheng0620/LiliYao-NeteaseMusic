@@ -32,7 +32,6 @@ export default {
         };
 
         let res = await getBanner(params);
-        console.log(res)
 
         if (res.status !== 200) {
           console.log('数据请求失败')
