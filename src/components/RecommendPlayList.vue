@@ -1,10 +1,39 @@
 <template>
   <div class="recommendplaylist">
     <h3>热门歌单</h3>
+    <div class="item">
+      <router-link to="/index" class="playListImg"
+                   active-class="is-active">
+        <el-image src="https://qpic.y.qq.com/music_cover/JOcib8DcZVqmEWnhqic9L7tSaHiaiccgibtFibAxf8nkB8xxBDNgHGRkmRdw/300?n=1" lazy>
+          <div slot="placeholder" class="image-slot">
+            <i class="iconfont icon-placeholder"></i>
+          </div>
+        </el-image>
+        <div class="cover">
+          <el-image class="coverPlayer" :src="require('@/assets/player.png')" lazy></el-image>
+        </div>
+        <span class="recommendDateBg">
+          <b></b><br>
+          <b></b>
+        </span>
+        <span class="recommendDate">
+          <b>{{ recommendWeek }}</b><br>
+          <b>{{ recommendDay }}</b>
+        </span>
+      </router-link>
+      <div class="info">
+        <router-link to="/index" class="info_name">每日歌曲推荐 </router-link>
+        <div class="copywriters">
+          <router-link to="/index" class="copywriter">
+            根据你的口味生成，每天6:00更新
+          </router-link>
+        </div>
+      </div>
+    </div>
     <div class="item" v-for="item in recmdPlayList" :key="item.userId">
       <router-link to="/index" class="playListImg"
                    active-class="is-active">
-        <el-image :src="item.picUrl" lazy class="text">
+        <el-image :src="item.picUrl" lazy>
           <div slot="placeholder" class="image-slot">
             <i class="iconfont icon-placeholder"></i>
           </div>
@@ -19,8 +48,8 @@
       </router-link>
       <div class="info">
         <router-link to="/index" class="info_name">{{item.name}} </router-link>
-        <div class="tags">
-          <router-link to="/index" class="tag">
+        <div class="copywriters">
+          <router-link to="/index" class="copywriter">
             {{ item.copywriter }}
           </router-link>
         </div>
@@ -36,7 +65,24 @@ export default {
   props: ['recmdPlayList'],
   data() {
     return {
+      recommendDay: 1,
+      recommendWeek: '星期五'
     }
+  },
+  mounted() {
+    // 动态显示日期（天）
+    let date = new Date()
+    let day = date.getDate()
+    this.recommendDay = day
+    // 动态显示星期
+    let weekArray = ["日", "一", "二", "三", "四", "五", "六"];
+    let week = weekArray[new Date(date).getDay()]; // 注意此处必须是先 new 一个 Date
+    this.recommendWeek = `星期${week}`
+  },
+  methods: {
+    dateFormat() {
+
+    },
   },
 }
 </script>
@@ -172,6 +218,62 @@ export default {
       font-style: normal;
     }
   }
+  
+  // 每日推荐歌曲的背景
+  .recommendDateBg {
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: 4;
+    font-size: 26px;
+    display: block;
+    width: 50%;
+    text-align: center;
+    color: #fff;
+    line-height: 40px;
+    border-radius: 0 0 50px 0;
+    background-color: #00DBDE;
+    /* Permalink - use to edit and share this gradient: https://colorzilla.com/gradient-editor/#000000+0,000000+100&0+0,0.5+97 */
+    background: -moz-linear-gradient(left,  rgba(139, 198, 236,0) 0%, rgba(149, 153, 226,0.5) 97%,rgba(149, 153, 226,0.5) 100%); /* FF3.6-15 */
+    background: -webkit-linear-gradient(left,  rgba(139, 198, 236,0) 0%,rgba(149, 153, 226,0.5) 97%,rgba(149, 153, 226,0.5) 100%); /* Chrome10-25,Safari5.1-6 */
+    background: linear-gradient(90deg, rgba(0,219,222,0.5) 0%, rgba(252,0,255, 0.5) 100%); /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
+    filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#00000000', endColorstr='#80000000',GradientType=1 ); /* IE6-9 */
+
+    .icon-playnum {
+      color: #fff;
+    }
+
+    b {
+      display: inline-block;
+      padding-left: 5px;
+      font-style: normal;
+    }
+  }
+
+  // 动态显示日期和星期的样式
+  .recommendDate {
+    position: absolute;
+    top: 15px;
+    left: 6px;
+    z-index: 5;
+    font-size: 35px;
+    display: block;
+    text-align: center;
+    width: 60%;
+    color: #fff;
+    line-height: 40px;
+    border-radius: 0 0 50px 0;
+
+    .icon-playnum {
+      color: #fff;
+    }
+
+    b {
+      display: inline-block;
+      padding-left: 5px;
+      font-style: normal;
+    }
+  }
 
   &:hover {
     .playListImg {
@@ -229,9 +331,9 @@ export default {
     word-break: break-all;
   }
 
-  .tags {
+  .copywriters {
     padding: 5px 0;
-    .tag {
+    .copywriter {
       font-size: 12px;
       color: #999;
     }

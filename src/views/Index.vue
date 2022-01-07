@@ -121,8 +121,10 @@ export default {
           message: '数据请求失败'
         });
       }
-      this.setRecommendPlayList(res.data.recommend)
-      this.recommendPlayList = res.data.recommend
+
+      // this.setRecommendPlayList(res.data.recommend.slice(0, 5))
+      this.recommendPlayList = res.data.recommend.slice(0, 5)
+
     },
     homeInit() {
       this.getHotTags()
