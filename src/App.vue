@@ -17,7 +17,7 @@
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
   color: #2c3e50;
-  min-width: 1000px; // 安全宽度
+  min-width: 1150px; // 安全宽度
 }
 
 #nav {

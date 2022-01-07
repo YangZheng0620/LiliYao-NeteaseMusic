@@ -8,6 +8,9 @@ import 'view-design/dist/styles/iview.css'
 import elements from '../plugins/elements/index'
 import utils from '../utils/utils'
 
+// import VueCookies from 'vue-cookies'
+// Vue.use(VueCookies)
+
 Vue.config.productionTip = false
 
 Vue.use(iviews)

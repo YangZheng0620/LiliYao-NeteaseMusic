@@ -95,7 +95,8 @@ export default {
 
   },
   methods: {
-    ...mapMutations(['setLoginDialog', 'setLogin', 'setUserInfo']),
+    ...mapMutations(['setLoginDialog', 'setLogin', 'setUserInfo', 'setRecommendPlayList']),
+
     loginDialog() {
       this.setLoginDialog(true)
     },
@@ -145,6 +146,7 @@ export default {
       window.sessionStorage.removeItem('userInfo')
 
       this.setLogin(false)
+      this.setRecommendPlayList([])
       this.setUserInfo() // 删除用户详情信息
 
       // if (this.$route.path.indexOf('/my') >= 0) {
@@ -153,7 +155,7 @@ export default {
     },
   },
   computed: {
-    ...mapGetters(['isLogin', 'userInfo'])
+    ...mapGetters(['isLogin', 'userInfo']),
   },
 }
 </script>

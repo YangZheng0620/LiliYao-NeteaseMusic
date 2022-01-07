@@ -1,9 +1,10 @@
 <template>
-  <div class="playlist">
-    <div class="item" v-for="item in playList" :key="item.id">
+  <div class="recommendplaylist">
+    <h3>热门歌单</h3>
+    <div class="item" v-for="item in recmdPlayList" :key="item.userId">
       <router-link to="/index" class="playListImg"
                    active-class="is-active">
-        <el-image :src="item.coverImgUrl" lazy class="text">
+        <el-image :src="item.picUrl" lazy class="text">
           <div slot="placeholder" class="image-slot">
             <i class="iconfont icon-placeholder"></i>
           </div>
@@ -13,14 +14,14 @@
         </div>
         <span class="playCount">
           <i class="el-icon-service"></i>
-          <em>{{$utils.formatCount(item.playCount)}}</em>
+          <em>{{$utils.formatCount(item.playcount)}}</em>
         </span>
       </router-link>
       <div class="info">
         <router-link to="/index" class="info_name">{{item.name}} </router-link>
         <div class="tags">
-          <router-link to="/index" class="tag" v-for="(tag, index) in item.tags" :key="index">
-            #{{ tag }}
+          <router-link to="/index" class="tag">
+            {{ item.copywriter }}
           </router-link>
         </div>
       </div>
@@ -31,8 +32,8 @@
 <script>
 
 export default {
-  name: 'play-list',
-  props: ['playList'],
+  name: 'recommend-play-list',
+  props: ['recmdPlayList'],
   data() {
     return {
     }
@@ -43,7 +44,7 @@ export default {
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style lang="scss" scoped>
 
-.playlist {
+.recommendplaylist {
   display: flex;
   flex-wrap: wrap;
   justify-content: space-between;
@@ -55,7 +56,7 @@ export default {
 
 .item {
   width: 18%;
-  padding: 20px 2% 30px 0;
+  padding: 20px 3% 30px 0;
   margin-right: -22px;
 
   .playListImg {
@@ -232,10 +233,9 @@ export default {
     padding: 5px 0;
     .tag {
       font-size: 12px;
-      color: #42b983;
+      color: #999;
     }
   }
 
 }
-
 </style>

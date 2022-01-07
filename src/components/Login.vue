@@ -39,7 +39,7 @@
 
 <script>
 import { mapState, mapMutations } from 'vuex'
-import { login, getUserInfo } from '/apis/api'
+import {login, getUserInfo, recommendplaylist} from '/apis/api'
 
 export default {
   name: 'login',
@@ -66,7 +66,7 @@ export default {
     }
   },
   methods: {
-    ...mapMutations(['setLoginDialog', 'setLogin', 'setUserInfo']),
+    ...mapMutations(['setLoginDialog', 'setLogin', 'setUserInfo', 'setRecommendPlayList']),
     // 提交账号密码
     submitForm() {
       this.$refs.loginFormRef.validate(async (valid) => {
@@ -94,13 +94,31 @@ export default {
             window.sessionStorage.setItem('token', res.data.token)
             window.sessionStorage.setItem('cookie', res.data.cookie)
             window.sessionStorage.setItem('isLogin', true)
+            window.sessionStorage.setItem('isLogin', true)
             // 关闭登录窗口
             this.setLoginDialog(false)
+            // this.$cookies.set('MUSIC_U', res.data.token, null,'/','cloud-music.pl-fe.cn',null,null)
+            // this.$cookies.set('MUSIC_U', res.data.token)
+            this.getRecommendPlayList()
           }
         } else {
           alert('error submit')
         }
       })
+    },
+    // 获取每日推荐歌单数据
+    async getRecommendPlayList() {
+
+      let res = await recommendplaylist();
+
+      if (res.status !== 200) {
+        this.$notify.error({
+          title: '错误',
+          message: '数据请求失败'
+        });
+      }
+      this.setRecommendPlayList(res.data.recommend)
+      this.recommendPlayList = res.data.recommend
     },
     // 获取用户详情信息
     async getUserInfo(uid) {

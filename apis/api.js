@@ -53,11 +53,22 @@ const hotplaylist = () => {
     })
 }
 
+// 获取每日推荐歌单
+const recommendplaylist = () => {
+    return instance({
+        url: '/recommend/resource',
+        method: 'GET',
+        withCredentials: true,
+
+    })
+}
+
 export {
     getBanner,
     login,
     getUserInfo,
     logout,
     playlist,
-    hotplaylist
+    hotplaylist,
+    recommendplaylist
 }

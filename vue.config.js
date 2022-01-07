@@ -12,5 +12,15 @@ module.exports = {
             // template 中的 title 标签需要是 <title><%= htmlWebpackPlugin.options.title %></title>
             title: '网易云音乐',
         },
+    },
+    devServer: {
+        proxy: {
+            '/api': {
+                target: 'http://cloud-music.pl-fe.cn',
+                pathRewrite: {'^/api': ''}, // 删除前缀
+                ws: true, // 用于支持 websocket
+                changeOrigin: true // 用于控制请求头中的 host 字段，默认为 true
+            },
+        }
     }
 }
