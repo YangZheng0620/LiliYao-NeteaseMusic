@@ -63,6 +63,25 @@ const recommendplaylist = () => {
     })
 }
 
+// 获取搜索建议
+const getSearchSuggest = (params) => {
+    return instance({
+        url: '/search/suggest',
+        method: 'GET',
+        params: params
+
+    })
+}
+
+// 获取热门榜单
+const getSearchHotSongs = () => {
+    return instance({
+        url: '/search/hot/detail',
+        method: 'GET',
+
+    })
+}
+
 export {
     getBanner,
     login,
@@ -70,5 +89,7 @@ export {
     logout,
     playlist,
     hotplaylist,
-    recommendplaylist
+    recommendplaylist,
+    getSearchSuggest,
+    getSearchHotSongs
 }

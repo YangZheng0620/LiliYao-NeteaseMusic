@@ -3,7 +3,7 @@ import 'element-ui/lib/theme-chalk/index.css';
 import { Row, Col, Input, Dropdown, DropdownMenu,
     DropdownItem, Icon, Avatar, Badge, Button, Dialog,
     Form, FormItem, Carousel, CarouselItem, Notification,
-    Image, } from 'element-ui';
+    Image, Autocomplete, Popover} from 'element-ui';
 
 const components = [
     Row,
@@ -21,7 +21,9 @@ const components = [
     FormItem,
     Carousel,
     CarouselItem,
-    Image
+    Image,
+    Autocomplete,
+    Popover
 ]
 
 const elements= {
