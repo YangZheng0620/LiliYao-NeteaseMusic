@@ -2,7 +2,7 @@
   <div class="header">
     <el-row class="wrapper">
       <!-- logo -->
-      <el-col :span="4" class-name="nav">
+      <el-col :span="4">
         <div class="navLogo"></div>
 
       </el-col>
@@ -22,68 +22,14 @@
       <el-col :span="6">
         <el-popover width="400" trigger="focus" placement="bottom"
                     transition="fade-in-linear">
-          <template v-if="!state1">
-            <div class="hotHeader">热搜榜</div>
-            <div class="hotItem">
-              <div class="hotSongs" v-for="(item, index) in searchHotSongsList" :key="item.searchWord">
-                <div class="hotIndex">
-                  <span>{{ index + 1}}</span>
-                </div>
-                <div class="hotSong">
-                  <span>
-                    {{ item.searchWord }}
-                    <img v-if="item.iconUrl" :src="item.iconUrl" alt="">
-                  </span>
-                  <span>{{ item.content }}</span>
-                </div>
 
-              </div>
-            </div>
+          <search :searchSuggestList="searchSuggestList" :searchHotSongsList="searchHotSongsList"
+                  :activeNumList="activeNumList" :searchKeywords="searchKeywords"></search>
 
-          </template>
-          <template v-else>
-            <div class="userHeader">搜“{{state1}}”相关用户</div>
-            <div class="searchItem">
-              <div class="songs">
-                <div class="songsIcon">单曲</div>
-                <div class="songsItems">
-                  <span class="songsItem" v-for="songs in searchSuggestList.songs" :key="songs.id">
-                    {{songs.name}}
-                  </span>
-                </div>
-              </div>
-              <div class="songs">
-                <div class="songsIcon">歌手</div>
-                <div class="songsItems">
-                  <span class="songsItem" v-for="artists in searchSuggestList.artists" :key="artists.id">
-                    {{artists.name}}
-                  </span>
-                </div>
-              </div>
-              <div class="songs">
-                <div class="songsIcon">专辑</div>
-                <div class="songsItems">
-                  <span class="songsItem" v-for="albums in searchSuggestList.albums" :key="albums.id">
-                    {{albums.name}}
-                  </span>
-                </div>
-
-              </div>
-            </div>
-
-          </template>
-          <el-input v-model="state1" prefix-icon="el-icon-search" placeholder="请输入歌名、歌词、歌手或专辑"
-                    slot="reference" @input="handleInput" clearable/>
+          <el-input v-model="searchKeywords" prefix-icon="el-icon-search" placeholder="请输入歌名、歌词、歌手或专辑"
+                    slot="reference" @input="handleInput" @keyup.enter.native="handleInputChange()" clearable/>
         </el-popover>
 
-<!--        <el-autocomplete prefix-icon="el-icon-search" placeholder="请输入歌名、歌词、歌手或专辑"-->
-<!--                         v-model="state1" :trigger-on-focus="false" :fetch-suggestions="querySearch">-->
-<!--          <div>单曲</div>-->
-<!--          <template slot-scope="{ item }">-->
-
-<!--            <div class="name">{{ item.name }}</div>-->
-<!--          </template>-->
-<!--        </el-autocomplete>-->
       </el-col>
       <!-- 登录按钮 -->
       <el-col :span="2" class="user-avatar">
@@ -117,8 +63,10 @@
 
 <script>
 import { mapMutations, mapGetters } from 'vuex'
+import Search from "@/components/Search";
 import { logout, getSearchSuggest, getSearchHotSongs} from '/apis/api'
 import debounce from '/utils/debounce'
+
 
 // 使用防抖函数来处理输入框事件
 const debounceGetSearchSuggest = debounce(getSearchSuggest, 1000)
@@ -128,10 +76,14 @@ export default {
   props: {
     msg: String
   },
+  components: {
+    Search,
+  },
   data() {
     return {
       // isLogin: true,
-      state1: '',
+      searchKeywords: '',
+      activeNumList: [1, 2, 3], // 热搜榜前三名样式序号
       navMenuList: [
         {
           id: 1,
@@ -226,24 +178,36 @@ export default {
     },
     // 输入框处理事件
     async handleInput() {
-      console.log(!this.state1)
-      if (!this.state1) {
+      // 判断是空字符的处理逻辑
+      if (!this.searchKeywords) {
         this.searchSuggestList = []
+        debounceGetSearchSuggest.cancel()
         return
       }
       try {
         const params = {
-          keywords: this.state1
+          keywords: this.searchKeywords
         };
         let res = await debounceGetSearchSuggest(params);
         if (res.status !== 200) {
           console.log('数据请求失败')
         }
 
+        // 如果没有搜索建议则进入此判断，重新显示热歌榜
+        if (Object.keys(res.data.result).length === 0) {
+          this.searchSuggestList = []
+          return
+        }
+
         this.searchSuggestList = res.data.result
+        console.log(res.data.result)
       } catch (error) {
         console.log(error)
       }
+    },
+
+    async handleInputChange () {
+      console.log(this.searchKeywords)
     },
     // 获取热门榜单歌曲
     async searchHotSongs() {
@@ -267,6 +231,14 @@ export default {
   },
 }
 </script>
+
+<style lang="scss">
+
+.el-popover {
+  padding: 0;
+}
+</style>
+
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style lang="scss" scoped>
@@ -398,136 +370,5 @@ export default {
   //}
 }
 
-// 热搜榜样式
-.hotHeader {
-  font-size: 20px;
-}
-
-.hotItem {
-  overflow: auto;
-  height: 400px;
-  /* 隐藏滚动条 */
-  &::-webkit-scrollbar {
-    display: none;
-  }
-  .hotSongs {
-    display: flex;
-    .hotIndex {
-      display: flex;    /*实现垂直居中*/
-      align-items: center;    /*实现水平居中*/
-      justify-content: center;
-      flex-basis: 15%;
-      height: 50px;
-      font-size: 20px;
-      font-weight: 700;
-      color: rgb(194, 12, 12);
-    }
-    .hotSong {
-      flex-basis: 90%;
-      span:first-of-type {
-        font-size: 20px;
-        font-weight: 700;
-        display: block;
-        color: #333333;
-        img {
-          height: 15px;
-          width: 18px;
-        }
-      }
-      span {
-        color: #999999;
-      }
-    }
-
-  }
-}
-
-// 搜索建议样式
-.userHeader {
-  border-bottom: 1px #42b983 solid;
-  height: 20px;
-}
-
-.searchItem {
-  .songs {
-    display: flex;
-    .songsIcon {
-      display: flex;    /*实现垂直居中*/
-      align-items: center;    /*实现水平居中*/
-      justify-content: center;
-      border-right: 1px #42b983 solid;
-      flex-basis: 20%;
-    }
-    .songsItems {
-      display: flex;
-      flex-direction: column;
-      flex-basis: 80%;
-      .songsItem {
-        padding-left: 20px;
-        height: 30px;
-        line-height: 30px;
-        overflow:hidden;
-        text-overflow:ellipsis;
-        white-space:nowrap;
-        width: 250px;
-      }
-
-      .songsItem:hover {
-        color: #42b983;
-        cursor: pointer;
-      }
-    }
-
-  }
-
-  .artists {
-    display: flex;
-    .artistsIcon {
-      display: flex;    /*实现垂直居中*/
-      align-items: center;    /*实现水平居中*/
-      justify-content: center;
-      border-right: 1px #42b983 solid;
-      flex-basis: 30%;
-    }
-    .artistsItems {
-      display: flex;
-      flex-direction: column;
-      flex-basis: 70%;
-      .artistsItem {
-        padding-left: 20px;
-        height: 30px;
-        line-height: 30px;
-        overflow:hidden;
-        text-overflow:ellipsis;
-        white-space:nowrap
-      }
-    }
-
-  }
-  .albums {
-    display: flex;
-    .albumsIcon {
-      display: flex;    /*实现垂直居中*/
-      align-items: center;    /*实现水平居中*/
-      justify-content: center;
-      border-right: 1px #42b983 solid;
-      flex-basis: 30%;
-    }
-    .albumsItems {
-      display: flex;
-      flex-direction: column;
-      flex-basis: 70%;
-      .albumsItem {
-        padding-left: 20px;
-        height: 30px;
-        line-height: 30px;
-        overflow:hidden;
-        text-overflow:ellipsis;
-        white-space:nowrap
-      }
-    }
-
-  }
-}
 
 </style>

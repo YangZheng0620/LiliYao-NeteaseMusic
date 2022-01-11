@@ -94,7 +94,6 @@ export default {
       this.playListParams.offset = 0 // 将 offset 恢复为 0
       // 通过获取标签索引来得到标签名字
       this.playListParams.cat = index !== 0 ? this.playListTags[index].name : '华语'
-      console.log(this.playListParams)
 
       this.getPlayList(this.playListParams)
 
