@@ -134,6 +134,7 @@ export default {
     .hotSong {
       flex-basis: 90%;
       width: 200px;
+      overflow:hidden;
       span:first-of-type {
         font-size: 16px;
         font-weight: 400;
@@ -145,11 +146,13 @@ export default {
         }
       }
       .hotContent {
+        display: block;
         overflow:hidden;
         text-overflow:ellipsis;
         white-space: nowrap;
       }
       span {
+
         color: #999999;
       }
     }

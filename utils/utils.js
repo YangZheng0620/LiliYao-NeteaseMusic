@@ -12,7 +12,7 @@ export default {
     },
 
     // 时间毫秒格式化处理 2022-01-06 09:30:00
-    formartDate (originVal, fmt) {
+    formatDate (originVal, fmt) {
         const dt = new Date(originVal)
         const opt = {
             yyyy: dt.getFullYear(),
@@ -40,4 +40,5 @@ export default {
         const s = (Math.floor(duration % 60) + '').padStart(2, '0')
         return `${m}:${s}`
     },
+
 }

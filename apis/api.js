@@ -82,6 +82,40 @@ const getSearchHotSongs = () => {
     })
 }
 
+// 获取热门精品歌单
+const getHighQualityAlbum = (limit = 20, cat = 'ACG') => {
+    return instance({
+        url: '/top/playlist/highquality',
+        method: 'GET',
+        params: {
+            limit,
+            cat
+        }
+    })
+}
+
+// 获取歌单简介
+const getPlayListDesc = (id) => {
+    return instance({
+        url: '/playlist/detail',
+        method: 'GET',
+        params: {
+            id
+        }
+    })
+}
+
+// 获取用户详情
+const getUserDetail = (uid) => {
+    return instance({
+        url: '/user/detail',
+        method: 'GET',
+        params: {
+            uid
+        }
+    })
+}
+
 export {
     getBanner,
     login,
@@ -91,5 +125,8 @@ export {
     hotplaylist,
     recommendplaylist,
     getSearchSuggest,
-    getSearchHotSongs
+    getSearchHotSongs,
+    getHighQualityAlbum,
+    getPlayListDesc,
+    getUserDetail
 }
