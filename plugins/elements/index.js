@@ -4,7 +4,8 @@ import { Row, Col, Input, Dropdown, DropdownMenu,
     DropdownItem, Icon, Avatar, Badge, Button, Dialog,
     Form, FormItem, Carousel, CarouselItem, Notification,
     Image, Autocomplete, Popover, Menu, Submenu,
-    MenuItem, MenuItemGroup,Tabs, TabPane,  Collapse, CollapseItem} from 'element-ui';
+    MenuItem, MenuItemGroup,Tabs, TabPane,  Collapse, CollapseItem,
+    Table, TableColumn} from 'element-ui';
 
 const components = [
     Row,
@@ -33,6 +34,8 @@ const components = [
     TabPane,
     Collapse,
     CollapseItem,
+    Table,
+    TableColumn,
 ]
 
 const elements= {

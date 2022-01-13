@@ -45,8 +45,17 @@
     </div>
     <div class="songsList">
       <el-tabs v-model="activeName" @tab-click="handleClick">
-        <el-tab-pane label="歌曲列表" name="first">用户管理</el-tab-pane>
-        <el-tab-pane :label="`评论(${albumDescList.commentCount})`" name="second">配置管理</el-tab-pane>
+        <el-tab-pane label="歌曲列表" name="first">
+          <template v-if="isLoading">
+            <Loading />
+          </template>
+          <template v-else>
+            <song-list :albumSongsList="albumSongsList"></song-list>
+          </template>
+        </el-tab-pane>
+        <el-tab-pane :label="`评论(${albumDescList.commentCount})`" name="second">
+          <comments></comments>
+        </el-tab-pane>
         <el-tab-pane label="收藏者" name="third">角色管理</el-tab-pane>
       </el-tabs>
     </div>
@@ -54,31 +63,38 @@
 </template>
 
 <script>
-// import SongItemV1 from "@/components/SongItemV1";
-
-import {getPlayListDesc, getUserDetail} from "../../apis/api";
+import Loading from "@/components/Loading";
+import SongList from "@/components/SongList";
+import Comments from "@/components/Comments";
+import {mapGetters, mapMutations} from 'vuex'
+import {getPlayListDetail, getUserDetail, getSongsDetail} from "../../apis/api";
 
 export default {
   name: 'play-list-detail',
   props: ['albumID'],
   components: {
+    Loading,
+    SongList,
+    Comments
   },
   data() {
     return {
       albumDescList: [], // 歌单简介信息
       userDetailInfo: [], // 用户详情
-      activeName: 'second'
+      activeName: 'second',
+      albumSongsList: [], // 歌单里歌曲信息
+      isLoading: true, // 加载判断,
     }
   },
   methods: {
     handleClick(tab, event) {
-      console.log(tab, event);
     },
-    // 获得歌单简介
-    async getAlbumDesc(id) {
+    // 获得歌单详情
+    async getAlbumDetail(id) {
+
       try {
 
-        let res = await getPlayListDesc(id);
+        let res = await getPlayListDetail(id);
         if (res.status !== 200) {
           console.log('数据请求失败')
         }
@@ -93,9 +109,48 @@ export default {
 
         this.albumDescList = res.data.playlist
         this.userDetailInfo = userDetail.data.profile
+
+        // 登录则获取歌单中全部歌曲
+        if (this.isLogin) {
+          this.getAllSongs(res.data.playlist.trackIds)
+        } else {
+          this.albumSongsList = res.data.playlist.tracks
+        }
+
+
+
+
       } catch (error) {
         console.log(error)
       }
+    },
+    // 登录后获取完整歌单
+    async getAllSongs (ids) {
+      const sliceArr = []
+      const num = 500
+      let idsArr = []
+      this.isLoading = true
+      // 数组过长 每500份一组
+      for (let index = 0; index < ids.length; index += num) {
+        sliceArr.push(ids.slice(index, index + num))
+      }
+
+      for (let i = 0; i < sliceArr.length; i++) {
+        const arrs = []
+        sliceArr[i].map(d => {
+          arrs.push(d.id)
+        })
+
+        let res = await getSongsDetail(arrs.join(','));
+
+        if (res.status !== 200) {
+          console.log('数据请求失败')
+        }
+
+        this.albumSongsList = res.data.songs
+      }
+
+      this.isLoading = false
     },
   },
   watch: {
@@ -103,12 +158,15 @@ export default {
     "$route.query.id": {
       immediate: true,
       handler(newVal) {
-        this.getAlbumDesc(newVal);
+        this.getAlbumDetail(newVal);
       },
     },
   },
+  computed: {
+    ...mapGetters(['isLogin'])
+  },
   mounted() {
-    this.getAlbumDesc(this.$route.query.id)
+    this.getAlbumDetail(this.$route.query.id)
   }
 }
 </script>
@@ -194,7 +252,7 @@ export default {
 }
 
 .songsList {
-  height: 500px;
+  height: 900px;
   background: #8BC6EC;
   padding: 40px;
   // 标签总横线长度

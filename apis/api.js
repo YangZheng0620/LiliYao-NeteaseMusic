@@ -95,7 +95,7 @@ const getHighQualityAlbum = (limit = 20, cat = 'ACG') => {
 }
 
 // 获取歌单简介
-const getPlayListDesc = (id) => {
+const getPlayListDetail = (id) => {
     return instance({
         url: '/playlist/detail',
         method: 'GET',
@@ -116,6 +116,17 @@ const getUserDetail = (uid) => {
     })
 }
 
+// 获取歌曲详情
+const getSongsDetail = (ids) => {
+    return instance({
+        url: '/song/detail',
+        method: 'GET',
+        params: {
+            ids
+        }
+    })
+}
+
 export {
     getBanner,
     login,
@@ -127,6 +138,7 @@ export {
     getSearchSuggest,
     getSearchHotSongs,
     getHighQualityAlbum,
-    getPlayListDesc,
-    getUserDetail
+    getPlayListDetail,
+    getUserDetail,
+    getSongsDetail
 }
