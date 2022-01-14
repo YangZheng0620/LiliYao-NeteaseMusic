@@ -1,5 +1,6 @@
 <template>
   <div class="demo">
+
     <el-row class="wrapper">
       <!-- logo -->
       <el-col :span="2" class="right">
@@ -109,6 +110,8 @@ export default {
 <!--</style>-->
 
 <style lang="scss" scoped>
+
+
 
 .left {
   background: #42b983;

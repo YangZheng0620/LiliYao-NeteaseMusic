@@ -54,7 +54,9 @@
           </template>
         </el-tab-pane>
         <el-tab-pane :label="`评论(${albumDescList.commentCount})`" name="second">
-          <comments></comments>
+          <comments :albumCommentList="albumCommentList"
+                    :getAlbumComment="getAlbumComment"
+                    :playlistID="playlistID"></comments>
         </el-tab-pane>
         <el-tab-pane label="收藏者" name="third">角色管理</el-tab-pane>
       </el-tabs>
@@ -67,7 +69,7 @@ import Loading from "@/components/Loading";
 import SongList from "@/components/SongList";
 import Comments from "@/components/Comments";
 import {mapGetters, mapMutations} from 'vuex'
-import {getPlayListDetail, getUserDetail, getSongsDetail} from "../../apis/api";
+import {getPlayListDetail, getUserDetail, getSongsDetail, getPlaylistComment} from "../../apis/api";
 
 export default {
   name: 'play-list-detail',
@@ -79,15 +81,36 @@ export default {
   },
   data() {
     return {
+      playlistID: 0, // 歌单 ID
       albumDescList: [], // 歌单简介信息
       userDetailInfo: [], // 用户详情
       activeName: 'second',
       albumSongsList: [], // 歌单里歌曲信息
       isLoading: true, // 加载判断,
+      albumCommentList: [], // 歌单评论信息
     }
   },
   methods: {
-    handleClick(tab, event) {
+    handleClick(tab) {
+      switch (parseInt(tab.index)) {
+        case 0:
+          console.log(123)
+          break;
+        case 1:
+          // 如果已经有数据，就不重复请求
+          // if (Object.keys(this.albumCommentList).length) {
+          //   console.log('已经有数据了')
+          // } else {
+          //   this.getAlbumComment(this.$route.query.id)
+          // }
+          console.log(589)
+
+          break;
+        case 2:
+          console.log(345)
+          break;
+      }
+
     },
     // 获得歌单详情
     async getAlbumDetail(id) {
@@ -117,7 +140,7 @@ export default {
           this.albumSongsList = res.data.playlist.tracks
         }
 
-
+        this.isLoading = false
 
 
       } catch (error) {
@@ -152,6 +175,25 @@ export default {
 
       this.isLoading = false
     },
+    // 获取歌单评论
+    async getAlbumComment(id, limit, offset) {
+      try {
+
+        let res = await getPlaylistComment(id, limit, offset);
+
+        if (res.status !== 200) {
+          console.log('数据请求失败')
+        }
+
+        this.albumCommentList = res.data
+
+        this.isLoading = false
+
+      } catch (error) {
+        console.log(error)
+      }
+
+    },
   },
   watch: {
     // 监控路由中参数的变化
@@ -159,6 +201,8 @@ export default {
       immediate: true,
       handler(newVal) {
         this.getAlbumDetail(newVal);
+        this.getAlbumComment(newVal)
+        this.playlistID = this.$route.query.id
       },
     },
   },
@@ -167,6 +211,8 @@ export default {
   },
   mounted() {
     this.getAlbumDetail(this.$route.query.id)
+    this.getAlbumComment(this.$route.query.id)
+    this.playlistID = this.$route.query.id
   }
 }
 </script>

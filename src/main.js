@@ -7,6 +7,9 @@ import iviews from '../plugins/iviews/index'
 import 'view-design/dist/styles/iview.css'
 import elements from '../plugins/elements/index'
 import utils from '../utils/utils'
+import infiniteScroll from "vue-infinite-scroll";
+
+Vue.use(infiniteScroll);
 
 // import VueCookies from 'vue-cookies'
 // Vue.use(VueCookies)

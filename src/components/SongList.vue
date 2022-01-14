@@ -28,10 +28,13 @@
       </el-table-column>
       <el-table-column prop="name" label="歌手" width="200">
         <template v-slot="scope">
-          <span v-for="(item, index) in scope.row.ar" :key="index">
+          <div class="singerName">
+            <span v-for="(item, index) in scope.row.ar" :key="index">
             {{ item.name }}
             <span v-if="index !== scope.row.ar.length - 1">/</span>
           </span>
+          </div>
+
 
         </template>
       </el-table-column>
@@ -84,6 +87,13 @@ export default {
 }
 
 .playlistName {
+  display: block;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.singerName {
   display: block;
   white-space: nowrap;
   overflow: hidden;
