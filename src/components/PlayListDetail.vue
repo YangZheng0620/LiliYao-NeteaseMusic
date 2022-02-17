@@ -84,7 +84,7 @@ export default {
       playlistID: 0, // 歌单 ID
       albumDescList: [], // 歌单简介信息
       userDetailInfo: [], // 用户详情
-      activeName: 'second',
+      activeName: 'first',
       albumSongsList: [], // 歌单里歌曲信息
       isLoading: true, // 加载判断,
       albumCommentList: [], // 歌单评论信息

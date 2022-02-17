@@ -140,6 +140,28 @@ const getPlaylistComment = (id, limit = 10, offset = 0) => {
     })
 }
 
+// 获取歌曲 URL
+const getMusicUrl = (id) => {
+    return instance({
+        url: '/song/url',
+        method: 'GET',
+        params: {
+            id,
+        }
+    })
+}
+
+// 获取歌曲歌词
+const getSongLyric = (id) => {
+    return instance({
+        url: '/lyric',
+        method: 'GET',
+        params: {
+            id,
+        }
+    })
+}
+
 export {
     getBanner,
     login,
@@ -154,5 +176,7 @@ export {
     getPlayListDetail,
     getUserDetail,
     getSongsDetail,
-    getPlaylistComment
+    getPlaylistComment,
+    getMusicUrl,
+    getSongLyric,
 }

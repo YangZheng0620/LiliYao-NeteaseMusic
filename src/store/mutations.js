@@ -11,6 +11,15 @@ const mutations = {
     setRecommendPlayList (state, value) {
         state.recommendPlayList = value
     },
+    setMusicUrl (state, value) {
+        state.musicUrl = value
+    },
+    setMusicIsPlay (state, value) {
+        state.isPlay = value
+    },
+    updateCurrentTime(state, currentTime) {
+        state.currentTime = currentTime;
+    },
 
 }
 

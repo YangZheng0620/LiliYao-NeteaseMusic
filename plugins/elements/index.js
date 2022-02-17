@@ -5,7 +5,7 @@ import { Row, Col, Input, Dropdown, DropdownMenu,
     Form, FormItem, Carousel, CarouselItem, Notification,
     Image, Autocomplete, Popover, Menu, Submenu,
     MenuItem, MenuItemGroup,Tabs, TabPane,  Collapse, CollapseItem,
-    Table, TableColumn, Backtop, Pagination} from 'element-ui';
+    Table, TableColumn, Backtop, Pagination, Slider} from 'element-ui';
 
 const components = [
     Row,
@@ -37,7 +37,8 @@ const components = [
     Table,
     TableColumn,
     Backtop,
-    Pagination
+    Pagination,
+    Slider
 ]
 
 const elements= {

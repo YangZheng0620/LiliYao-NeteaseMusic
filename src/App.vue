@@ -9,9 +9,30 @@
     </div>
 
     <router-view/>
+    <bottom-control></bottom-control>
   </div>
 </template>
 
+<script>
+import BottomControl from "@/components/BottomControl";
+
+export default {
+  name: 'app',
+  components: {
+    BottomControl,
+  },
+  data () {
+    // 这里存放数据
+    return {
+    }
+  },
+  // 监听属性 类似于data概念
+  computed: {},
+  // 方法集合
+  methods: {
+  }
+}
+</script>
 
 <style lang="scss">
 #app {

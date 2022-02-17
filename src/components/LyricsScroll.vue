@@ -1,0 +1,199 @@
+<template>
+  <div class='lyrics-scroll'>
+    <!-- 占位 -->
+    <div class="placeholder"></div>
+    <!-- 因为歌词快了一句,所以减1 -->
+    <!-- 歌词item -->
+<!--    <div-->
+<!--        class="lyricsItem"-->
+<!--    >-->
+<!--      {{ item[1] }}-->
+<!--    </div>-->
+    <div class="lyricsItem" v-for="(lyric, index) in lyricInfos" :key="index" :class="currentLyricIndex === index ? 'lyric-active': ''">
+      {{lyric.text}}
+      <div>{{lyric.transText}}</div>
+    </div>
+    <!-- 占位 -->
+    <div class="placeholder"></div>
+
+
+  </div>
+</template>
+
+<script>
+import {getSongLyric} from "../../apis/api";
+import {parseLyric} from '../../utils/parse-lyric'
+import {returnSecond} from "../../utils/utils";
+import {mapGetters, mapMutations} from "vuex";
+
+export default {
+  name: 'lyrics-scroll',
+  components: {},
+  data () {
+    // 这里存放数据
+    return {
+      lyricInfos: [], // 歌词信息
+      currentLyricIndex: 0,
+      currentLyricText: "",
+      currentTime: 0,
+    }
+  },
+  created() {
+    this.getPageData()
+  },
+  // 监听属性 类似于data概念
+  computed: {
+    ...mapGetters(['songCurrentTime']),
+  },
+  watch: {
+    'songCurrentTime'(value) {
+      // console.log(value)
+      // 1.获取当前时间
+      const currentTime = value * 1000
+      console.log(currentTime)
+      // 2.根据当前时间修改currentTime
+      this.currentTime = currentTime
+
+      // 3.根据当前时间去查找播放的歌词
+      if (!this.lyricInfos.length) return
+      let i = 0
+      for (; i < this.lyricInfos.length; i++) {
+        const lyricInfo = this.lyricInfos[i]
+        if (currentTime < lyricInfo.time) {
+          break
+        }
+      }
+      // 设置当前歌词的索引和内容
+      const currentIndex = i - 1
+      if (this.currentLyricIndex !== currentIndex) {
+        const currentLyricInfo = this.lyricInfos[currentIndex]
+        console.log(currentLyricInfo)
+        this.currentLyricIndex = currentIndex
+        if (currentLyricInfo) {
+          this.currentLyricText = currentLyricInfo.text
+        }
+
+      }
+    }
+  },
+  // 方法集合
+  methods: {
+    ...mapMutations(['updateCurrentTime']),
+    // 获取歌曲歌词
+    async getLyric(id) {
+      let res = await getSongLyric(id);
+
+      if (res.status !== 200) {
+        this.$notify.error({
+          title: '错误',
+          message: '数据请求失败'
+        });
+      }
+
+      this.lyricInfos = res.data.lrc
+
+      const lyricString = res.data.lrc.lyric
+      let lyricTransString = ""
+      try {
+        lyricTransString = res.data.tlyric.lyric
+      } catch (error) {
+        console.log("")
+      }
+
+      const lyrics = parseLyric(lyricString)
+
+      const transLyrics = parseLyric(lyricTransString) // 翻译歌词
+      for (let i = 0; i < transLyrics.length; i++) {
+        let index = lyrics.findIndex((value) => value.time == transLyrics[i].time)
+
+        if (index === -1) {
+          console.log("")
+        } else {
+          lyrics[index]["transText"] = transLyrics[i].text
+        }
+
+
+      }
+
+      // 删除空白歌词
+      for (let i = 0; i < lyrics.length; i++) {
+        if (!lyrics[i].text) {
+          lyrics.splice(i, 1);
+        }
+      }
+      if (lyrics === undefined) {
+        this.lyricInfos = []
+      } else {
+        this.lyricInfos = lyrics
+      }
+    },
+
+    // 当前播放时间位置
+    // timeupdate() {
+    //   // console.log(e);
+    //   // console.log(this.$refs.audioPlayer.currentTime);
+    //   // 节流
+    //   let time = this.$refs.audioPlayer.currentTime;
+    //   // 将当前播放时间保存到vuex  如果保存到vuex这步节流,会导致歌词不精准,误差最大有1s
+    //   this.updateCurrentTime(time);
+    //
+    //   time = Math.floor(time);
+    //   // if (time !== lastSecond) {
+    //   //   // console.log(time);
+    //   //   lastSecond = time;
+    //   //
+    //   //   // console.log(this.timeProgress);
+    //   // }
+    //   this.currentTime = time;
+    //   console.log(time)
+    // },
+    getPageData() {
+      this.getLyric(this.$route.query.id)
+
+    },
+  }
+}
+</script>
+<style lang="scss" scoped>
+
+.lyrics {
+  width: 100%;
+  height: 275px;
+  font-size: 12px;
+  text-align: center;
+  overflow-y: scroll;
+
+  /* overflow: scroll; */
+}
+
+.lyrics::-webkit-scrollbar {
+  display: none;
+}
+
+.lyricsItem {
+  font-size: 12px;
+  /* height: 20px; */
+  margin: 25px 20px;
+  transition: all 0.5s;
+  line-height: 20px;
+  color: #f2f2f2;
+}
+
+.currentLyric {
+  font-weight: 600;
+  font-size: 14px;
+  color: black;
+
+}
+
+.lyric-active {
+  color: #42b983;
+  font-size: 18px;
+}
+
+.placeholder {
+  width: 100%;
+  height: 40%;
+}
+
+</style>

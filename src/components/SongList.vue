@@ -16,7 +16,7 @@
       <el-table-column label="歌曲" width="200">
         <template v-slot="scope">
           <div class="songName">
-            <router-link :to="{ path: 'index', query: { id: scope.row.id }}"
+            <router-link :to="{ path: 'about', query: { id: scope.row.id }}"
                          active-class="is-active">
               {{ scope.row.name }}
               <span class="songNameAlia" v-if="scope.row.alia[0]">({{ scope.row.alia[0] }})
@@ -68,6 +68,7 @@ export default {
   computed: {},
   // 方法集合
   methods: {
+
   }
 }
 </script>

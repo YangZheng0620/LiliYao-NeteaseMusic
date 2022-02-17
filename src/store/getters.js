@@ -12,6 +12,18 @@ const getters = {
     userInfo (state) {
         return state.userInfo || JSON.parse(window.sessionStorage.getItem('userInfo'))
     },
+    // 歌曲 Url
+    musicUrl (state) {
+        return state.musicUrl
+    },
+    // 歌曲是否在播放
+    isPlay (state) {
+        return state.isPlay
+    },
+    // 获取歌曲当前时间
+    songCurrentTime (state) {
+        return state.currentTime
+    },
 }
 
 export default getters
