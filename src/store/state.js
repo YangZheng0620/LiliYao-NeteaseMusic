@@ -6,6 +6,10 @@ const state = {
     musicUrl: '', // 歌曲 url,
     isPlay: true, // 歌曲是否在播放
     currentTime: 0, // 实时播放时长
+    songDetail: [], // 歌曲信息
+    playListSongs: [], // 歌曲播放列表
+    playListIndex: 0, // 歌曲下标
+    songId: '', // 歌曲 id
 }
 
 export default state

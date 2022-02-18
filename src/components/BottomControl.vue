@@ -1,46 +1,49 @@
 <template>
   <div class='bottom-control'>
     <audio
-        :src="musicUrl"
+        :src="getMusicUrl"
         @play="changeState(true)"
         @pause="changeState(false)"
         @timeupdate="timeupdate"
+        @ended="SongEnd"
         ref="audioPlayer"
-
         autoplay
+
     ></audio>
     <div>
       <!-- 进度条 -->
       <div class="progressBar">
-        <span class="currentTime">{{ currentTime }}</span>
+        <span class="currentTime">{{ $utils.formatSongTime(currentTime * 1000) }}</span>
         <!-- :value 是单向的  要实现双向要v-model -->
         <el-slider
             class="progressSlider"
             v-model="timeProgress"
             @change="changeProgress"
+            @input="realTimeChange"
+            :show-tooltip="false"
         ></el-slider>
-        <span class="totalTime">{{ duration }}</span>
+        <span class="totalTime">{{ $utils.formatSongTime(songDetail.dt) }}</span>
       </div>
     </div>
     <div class="bottom">
       <!-- 左边 -->
       <div class="left">
         <div class="avatar">
+
           <img
-              src="https://qpic.y.qq.com/music_cover/JOcib8DcZVqmEWnhqic9L7tSaHiaiccgibtFibAxf8nkB8xxBDNgHGRkmRdw/300?n=1"
+              :src="songDetail.al.picUrl"
               alt=""
           />
           <!--        <img src="~assets/img/test.jpg" alt=""  />-->
         </div>
         <div class="musicInfo">
           <div class="musicName" >
-            预兆
+            {{songDetail.name}}
           </div>
-          <div
-              class="singer"
-          >
-            芝麻Mochi
-          </div>
+          <span v-for="(singer, index) in songDetail.ar" :key="singer.id" class="singer">
+              <span v-if="index === 0">歌手：{{singer.name}} </span>
+              <span v-else> / {{singer.name}}</span>
+            </span>
         </div>
         <div class="downloadContainer">
           <!--        <i class="iconfont icon-download"></i>-->
@@ -50,14 +53,14 @@
       <!-- 中间 -->
       <div class="center">
         <div class="buttons">
-          <span><img src="@/assets/player/play_order.png" alt=""></span>
-          <span><img src="@/assets/player/play_prev.png" alt=""></span>
+          <span><img src="@/assets/player/play_order.png" alt="" ></span>
+          <span><img src="@/assets/player/play_prev.png" alt="" @click="handlePreBtnClick"></span>
           <span>
             <img src="@/assets/player/play_pause.png" v-if="isPlay" alt="" @click="changePlayState()">
           <img src="@/assets/player/play_resume.png"  v-else alt="" @click="changePlayState()">
 
         </span>
-          <span><img src="@/assets/player/play_next.png" alt=""></span>
+          <span><img src="@/assets/player/play_next.png" alt="" @click="handleNextBtnClick"></span>
           <span></span>
         </div>
       </div>
@@ -66,8 +69,13 @@
       <!-- 右边 -->
       <div class="right">
         <div class="volumeControl">
+          <span>{{realVolume}}%</span>
           <el-slider
               class="volumeSlider"
+              v-model="volume"
+              @change="changeVolume"
+              @input="realVolumeChange"
+              :show-tooltip="false"
           ></el-slider>
         </div>
         <div class="playList">
@@ -82,7 +90,8 @@
 
 <script>
 import { mapGetters, mapMutations } from "vuex";
-import { handleMusicTime, returnSecond } from "../../utils/utils";
+// import { handleMusicTime, returnSecond, formatSongTimeSec } from "../../utils/utils";
+
 let durationNum = 0
 
 export default {
@@ -97,18 +106,31 @@ export default {
       currentTime: 0,
       // 进度条的位置
       timeProgress: 0,
+      isMounted: true,
+      volume: 100,
+      realVolume: 100,
+      playModeIndex: 0, // 0: 循环播放 1: 单曲循环 2: 随机播放
+      // playListIndex: 0,
     }
+  },
+  mounted() {
+    // this.$refs.audioPlayer.play();
   },
   // 监听属性 类似于data概念
   computed: {
-    ...mapGetters(['musicUrl', 'isPlay']),
-
+    ...mapGetters(['getMusicUrl', 'isPlay', 'songDetail', 'playListSongs', 'playListIndex', 'songId', 'songDetail']),
+    // reversedMessage: function () {
+    //   // if(this.isMounted) {
+    //   //   return formatSongTimeSec(this.$refs.audioPlayer.duration)
+    //   // }
+    //
+    // }
   },
   // 方法集合
   methods: {
-    ...mapMutations(['setMusicIsPlay', 'updateCurrentTime']),
+    ...mapMutations(['setMusicIsPlay', 'updateCurrentTime', 'playMusicWithSongIdAction', 'getPlayListIndex', 'getSongId']),
     changePlayState() {
-
+      console.log(123)
       !this.isPlay ? this.playMusic() : this.pauseMusic();
     },
     // 播放音乐的函数
@@ -118,9 +140,64 @@ export default {
     // 暂停音乐的函数
     pauseMusic() {
       this.$refs.audioPlayer.pause();
+      // this.duration = formatSongTimeSec(this.$refs.audioPlayer.duration)
     },
     changeState(state) {
       this.setMusicIsPlay(state)
+    },
+    changeNewMusicAction(isNext) {
+        // 1.获取当前索引
+      let index = this.playListIndex
+
+      // 2.根据不同的播放模式, 获取下一首歌的索引
+      switch (this.playModeIndex) {
+        case 0: // 顺序播放
+          index = isNext ? index + 1 : index - 1
+          if (index === -1) index = this.playListSongs.length - 1
+          if (index === this.playListSongs.length) index = 0
+          break
+        case 1: // 单曲循环
+          break
+        case 2: // 随机播放
+          index = Math.floor(Math.random() * this.playListSongs.length)
+          break
+      }
+
+
+
+      // 3.获取歌曲
+      let currentSong = this.playListSongs[index]
+      console.log(currentSong.id)
+      if (!currentSong) {
+        currentSong = this.currentSong
+      } else {
+        // 记录最新的索引
+        this.getPlayListIndex(index)
+      }
+
+      // 4.播放新的歌曲
+      this.playMusicWithSongIdAction(currentSong.id)
+
+      this.getSongId(currentSong.id)
+      this.$router.push({path:'about',query: {id:currentSong.id}})
+    },
+    handleNextBtnClick() {
+      console.log(this.songId)
+      let id = this.songId
+
+      this.changeNewMusicAction(true)
+      // this.$router.push({path:'about',query: {id:id}})
+
+    },
+    handlePreBtnClick() {
+      console.log(this.songId)
+      let id = this.songId
+
+      this.changeNewMusicAction(false)
+      // this.$router.push({path:'about',query: {id:id}})
+      // setTimeout(() => {
+      //   this.$router.push({path:'about',query: {id:id}})
+      // },1000);
     },
     // 当前播放时间位置
     timeupdate() {
@@ -128,6 +205,7 @@ export default {
       // console.log(this.$refs.audioPlayer.currentTime);
       // 节流
       let time = this.$refs.audioPlayer.currentTime;
+      // console.log(time)
       // 将当前播放时间保存到vuex  如果保存到vuex这步节流,会导致歌词不精准,误差最大有1s
       this.updateCurrentTime(time);
 
@@ -140,17 +218,36 @@ export default {
       // }
       this.currentTime = time;
       // 计算进度条的位置
-      durationNum = returnSecond(this.duration)
+      // durationNum = returnSecond(this.duration)
+      durationNum = this.$refs.audioPlayer.duration
       this.timeProgress = Math.floor((time / durationNum) * 100);
-      console.log(this.duration)
+      // console.log(this.duration)
     },
     // 拖动进度条的回调
     changeProgress(e) {
-      console.log(e);
+      // console.log(e);
       // 修改当前播放时间
       this.currentTime = Math.floor((e / 100) * durationNum);
       // 改变audio的实际当前播放时间
       this.$refs.audioPlayer.currentTime = this.currentTime;
+    },
+    realTimeChange(e) {
+      this.currentTime = Math.floor((e / 100) * durationNum);
+      // 改变audio的实际当前播放时间
+      // this.$refs.audioPlayer.currentTime = this.currentTime;
+    },
+    // 改变音量
+    changeVolume(e) {
+      this.$refs.audioPlayer.volume = e / 100;
+      this.realVolume = e
+    },
+    realVolumeChange(e) {
+      console.log(e)
+      this.$refs.audioPlayer.volume = e / 100;
+      this.realVolume = e
+    },
+    SongEnd() {
+      this.changeNewMusicAction(true)
     },
   },
   watch: {
@@ -283,6 +380,7 @@ export default {
 
 .volumeSlider {
   width: 55px;
+  z-index: 99;
 }
 
 //.icon-bofangliebiao {

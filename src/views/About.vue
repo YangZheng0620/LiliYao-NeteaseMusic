@@ -1,6 +1,6 @@
 <template>
   <div class="about">
-    <img class="background" src="https://qpic.y.qq.com/music_cover/JOcib8DcZVqmEWnhqic9L7tSaHiaiccgibtFibAxf8nkB8xxBDNgHGRkmRdw/300?n=1" alt="">
+    <img class="background" :src="songDetail.al.picUrl" alt="">
     <div class="closeCard">
       <i class="iconfont icon-arrow-down-bold"></i>
     </div>
@@ -14,51 +14,65 @@
                 class="disc"
             >
 <!--              <img src="~assets/img/MusicDetailCard/disc.png" alt="" />-->
+<!--              <img-->
+<!--                  src="@/assets/60b0f4afc9524dd79376f5c91897630a.jpeg"-->
+<!--                  alt=""-->
+<!--                  class="musicAvatar"-->
+<!--              />-->
               <img
-                  src="@/assets/60b0f4afc9524dd79376f5c91897630a.jpeg"
+                  :src="songDetail.al.picUrl"
                   alt=""
                   class="musicAvatar"
               />
-              <img
-                  src="https://qpic.y.qq.com/music_cover/JOcib8DcZVqmEWnhqic9L7tSaHiaiccgibtFibAxf8nkB8xxBDNgHGRkmRdw/300?n=1"
-                  alt=""
-                  class="musicAvatar"
-              />
+<!--              <img-->
+<!--                  src="https://qpic.y.qq.com/music_cover/JOcib8DcZVqmEWnhqic9L7tSaHiaiccgibtFibAxf8nkB8xxBDNgHGRkmRdw/300?n=1"-->
+<!--                  alt=""-->
+<!--                  class="musicAvatar"-->
+<!--              />-->
             </div>
           </div>
         </div>
         <div class="right">
           <div class="title">
-            <div class="musicName">预兆</div>
+            <div class="musicName">{{songDetail.name}}</div>
+
+            <span v-for="(singer, index) in songDetail.ar" :key="singer.id" class="singer">
+              <span v-if="index === 0">歌手：{{singer.name}} </span>
+              <span v-else> / {{singer.name}}</span>
+            </span>
+
             <div
                 class="album"
+                v-if="songDetail.alia.name"
             >
-              预兆
-            </div>
-            <div
-                class="singer"
-            >
-              芝麻Mochi
+              <span>专辑：{{songDetail.alia.name}}</span>
             </div>
           </div>
           <lyrics-scroll></lyrics-scroll>
         </div>
+
+      </div>
+      <div class="bottom">
+        <songComments :getSongComment="songCommentList" :getHotSongComment="songHotCommentList"></songComments>
       </div>
     </div>
-  </div>
+    </div>
+
 </template>
 
 <script>
 
 import LyricsScroll from "@/components/LyricsScroll";
-import {getMusicUrl} from "../../apis/api";
+import SongComments from "@/components/SongComments";
+import {getMusicUrl, getSongDetail, getSongComment} from "../../apis/api";
 import {mapGetters, mapMutations} from "vuex";
 
 
 export default {
   name: 'about',
   components: {
-    LyricsScroll
+    LyricsScroll,
+    SongComments
   },
   data () {
     // 这里存放数据
@@ -66,17 +80,25 @@ export default {
       isLoading: false,
       limit: 10,
       currentPageIndex: 1,
-      musicUrl: '',
+      // musicUrl: '',
+      // songDetail: [],
+      songCommentList: [],
+      songHotCommentList: [],
     }
   },
   // 监听属性 类似于data概念
   computed: {
-    ...mapGetters(['musicUrl']),
+    ...mapGetters(['musicUrl', 'songDetail', 'songId']),
 
+  },
+  watch: {
+    'songId'(value) {
+      this.getSongComment(value)
+    },
   },
   // 方法集合
   methods: {
-    ...mapMutations(['setMusicUrl']),
+    ...mapMutations(['setMusicUrl', 'getSongDetail']),
     // 获得歌单详情
     async getAlbumDetail(id) {
 
@@ -86,18 +108,49 @@ export default {
         if (res.status !== 200) {
           console.log('数据请求失败')
         }
-
+        if (this.musicUrl === res.data.data[0].url) return
         this.setMusicUrl(res.data.data[0].url)
+
+        let res2 = await getSongDetail(id);
+        if (res2.status !== 200) {
+          console.log('数据请求失败')
+        }
+
+        this.songDetail= res2.data.songs[0]
+        this.getSongDetail(res2.data.songs[0])
+
 
 
       } catch (error) {
         console.log(error)
       }
     },
+    // 获取歌曲评论
+    async getSongComment(id, limit, offset) {
+      try {
+
+        let res = await getSongComment(id, limit, offset);
+
+        if (res.status !== 200) {
+          console.log('数据请求失败')
+        }
+
+        this.songCommentList = res.data.comments
+        this.songHotCommentList = res.data.hotComments
+        console.log(res.data.comments)
+
+      } catch (error) {
+        console.log(error)
+      }
+
+    },
   },
 
   mounted() {
     this.getAlbumDetail(this.$route.query.id)
+    console.log(this.songId)
+    this.getSongComment(this.$route.query.id)
+    // this.getSongComment(this.songId)
   }
 }
 </script>
@@ -106,6 +159,8 @@ export default {
 
 .about {
   position: relative;
+  background: rgba(0, 0, 0, 0.2);
+  z-index: -1;
 }
 
 .background {
@@ -190,6 +245,7 @@ export default {
   margin-top: 60px;
   width: 300px;
   position: relative;
+  z-index: 1;
 }
 
 .disc {
@@ -256,12 +312,20 @@ export default {
 .musicName {
   font-size: 23px;
   color: rgb(22, 22, 22);
+  font-weight: 700;
+}
+
+.singer {
+  font-size: 12px;
+  color: rgb(22, 22, 22);
 }
 
 .bottom {
   margin: 40px auto;
   // width: 55vw;
   width: 44vw;
+  display: flex;
+  justify-content: center;
 }
 
 .page {

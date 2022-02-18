@@ -53,6 +53,7 @@
 <script>
 import PlayListDetail from "@/components/PlayListDetail";
 import { getHighQualityAlbum } from '/apis/api'
+import {mapMutations} from "vuex";
 
 export default {
   name: 'Demo',
@@ -66,6 +67,7 @@ export default {
     }
   },
   methods: {
+
     // 获得热门精品歌单
     async getHighQualityPlayList() {
       try {

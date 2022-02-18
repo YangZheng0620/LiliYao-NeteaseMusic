@@ -9,10 +9,14 @@
 <!--    >-->
 <!--      {{ item[1] }}-->
 <!--    </div>-->
-    <div class="lyricsItem" v-for="(lyric, index) in lyricInfos" :key="index" :class="currentLyricIndex === index ? 'lyric-active': ''">
-      {{lyric.text}}
-      <div>{{lyric.transText}}</div>
+    <div class="lyrics" >
+      <div class="lyricsItem" v-for="(lyric, index) in lyricInfos" :key="index" :class="currentLyricIndex === index ? 'lyric-active': ''"
+      >
+        {{lyric.text}}
+        <div>{{lyric.transText}}</div>
+      </div>
     </div>
+
     <!-- 占位 -->
     <div class="placeholder"></div>
 
@@ -33,24 +37,64 @@ export default {
     // 这里存放数据
     return {
       lyricInfos: [], // 歌词信息
-      currentLyricIndex: 0,
-      currentLyricText: "",
-      currentTime: 0,
+      currentLyricIndex: 0, // 歌词下标
+      currentLyricText: "", // 当前歌词
+      currentTime: 0, // 歌曲当前播放时间
+      lyricScrollTop: 0,
+      lyricTransform: "",
+      isTransText: false, // 是否有翻译歌词
     }
   },
   created() {
     this.getPageData()
+
+  },
+  mounted() {
+    // window.addEventListener('mousewheel',this.handleScroll);
+    // console.log(this.$el.querySelector(".lyrics").scrollTop)
+
+    // this.$el.querySelector(".lyrics").scrollTop = 500
+
+  },
+  updated () {
+    this.$nextTick(function () {
+      let index = this.currentLyricIndex
+      if (this.isTransText) {
+        if (index > 6) {
+          this.$el.querySelector(".lyrics").scrollTop = index * 55
+        } else {
+          this.$el.querySelector(".lyrics").scrollTop = index * 40
+        }
+      } else {
+        if (index > 6) {
+          this.$el.querySelector(".lyrics").scrollTop = index * 40
+        } else {
+          this.$el.querySelector(".lyrics").scrollTop = index * 20
+        }
+      }
+
+
+
+    });
   },
   // 监听属性 类似于data概念
   computed: {
-    ...mapGetters(['songCurrentTime']),
+    ...mapGetters(['songCurrentTime', 'songId']),
+    // 歌曲实时滚动
+    // lyricTransform() {
+    //   if (this.currentLyricIndex > 6) {
+    //     return `transform: translateY(-${this.currentIndex * 65}px)`;
+    //   } else {
+    //     return 'transform: translateY(0)';
+    //   }
+    // },
   },
   watch: {
     'songCurrentTime'(value) {
       // console.log(value)
       // 1.获取当前时间
       const currentTime = value * 1000
-      console.log(currentTime)
+      // console.log(currentTime)
       // 2.根据当前时间修改currentTime
       this.currentTime = currentTime
 
@@ -67,14 +111,24 @@ export default {
       const currentIndex = i - 1
       if (this.currentLyricIndex !== currentIndex) {
         const currentLyricInfo = this.lyricInfos[currentIndex]
-        console.log(currentLyricInfo)
+        // console.log(currentLyricInfo)
         this.currentLyricIndex = currentIndex
+        // if (this.currentLyricIndex > 6) {
+        //   let index = this.currentLyricIndex
+        //   this.lyricTransform = `transform: translateY(-${index * 55}px)`;
+        // } else {
+        //   this.lyricTransform = 'transform: translateY(0)';
+        // }
         if (currentLyricInfo) {
           this.currentLyricText = currentLyricInfo.text
         }
 
       }
-    }
+    },
+    'songId'(value) {
+      console.log(123, value)
+      this.getLyric(value)
+    },
   },
   // 方法集合
   methods: {
@@ -96,6 +150,11 @@ export default {
       let lyricTransString = ""
       try {
         lyricTransString = res.data.tlyric.lyric
+        if (!lyricTransString) {
+          this.isTransText = false
+        } else {
+          this.isTransText = true
+        }
       } catch (error) {
         console.log("")
       }
@@ -147,23 +206,46 @@ export default {
     //   this.currentTime = time;
     //   console.log(time)
     // },
+
+    //判断滚动方向，因为此demo中只有四页，故边界处理为 0 与 3
+    handleScroll(e){
+      // console.log(this.$el.querySelector(".lyrics").scrollTop)
+      // let direction = e.deltaY > 0 ? 'down':'up';  //deltaY为正则滚轮向下，为负滚轮向上
+      // if(direction==='down'){ //125为用户一次滚动鼠标的wheelDelta的值
+      //   // console.log(e.deltaY)
+      // }
+      // if(direction==='up'){
+      //   // let index = this.currentLyricIndex
+      //   // this.lyricTransform = `transform: translateY(-${index * 55 + e.deltaY}px)`;
+      //   // console.log(index * 55 + e.deltaY)
+      //   // console.log(this.lyricTransform)
+      // }
+
+    },
     getPageData() {
       this.getLyric(this.$route.query.id)
-
+      // this.getLyric(this.songId)
     },
   }
 }
 </script>
 <style lang="scss" scoped>
+.lyrics-scroll {
+  height: 500px;
+  //overflow: hidden;
+}
+
+//.lyrics-scroll::-webkit-scrollbar {
+//  display: none;
+//}
 
 .lyrics {
   width: 100%;
-  height: 275px;
+  height: 500px;
   font-size: 12px;
   text-align: center;
   overflow-y: scroll;
-
-  /* overflow: scroll; */
+  //overflow: scroll;
 }
 
 .lyrics::-webkit-scrollbar {
@@ -193,7 +275,7 @@ export default {
 
 .placeholder {
   width: 100%;
-  height: 40%;
+  height: 10%;
 }
 
 </style>

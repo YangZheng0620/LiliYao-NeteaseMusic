@@ -140,6 +140,19 @@ const getPlaylistComment = (id, limit = 10, offset = 0) => {
     })
 }
 
+// 获取歌曲评论
+const getSongComment = (id, limit = 10, offset = 0) => {
+    return instance({
+        url: '/comment/music',
+        method: 'GET',
+        params: {
+            id,
+            limit,
+            offset
+        }
+    })
+}
+
 // 获取歌曲 URL
 const getMusicUrl = (id) => {
     return instance({
@@ -162,6 +175,17 @@ const getSongLyric = (id) => {
     })
 }
 
+// 获取歌曲信息
+const getSongDetail = (ids) => {
+    return instance({
+        url: '/song/detail',
+        method: 'GET',
+        params: {
+            ids,
+        }
+    })
+}
+
 export {
     getBanner,
     login,
@@ -179,4 +203,6 @@ export {
     getPlaylistComment,
     getMusicUrl,
     getSongLyric,
+    getSongDetail,
+    getSongComment
 }

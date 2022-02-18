@@ -13,7 +13,7 @@ const getters = {
         return state.userInfo || JSON.parse(window.sessionStorage.getItem('userInfo'))
     },
     // 歌曲 Url
-    musicUrl (state) {
+    getMusicUrl (state) {
         return state.musicUrl
     },
     // 歌曲是否在播放
@@ -23,6 +23,20 @@ const getters = {
     // 获取歌曲当前时间
     songCurrentTime (state) {
         return state.currentTime
+    },
+    // 获取歌曲信息
+    songDetail (state) {
+        return state.songDetail
+    },
+    // 获取歌曲信息
+    playListSongs (state) {
+        return state.playListSongs
+    },
+    playListIndex (state) {
+        return state.playListIndex
+    },
+    songId (state) {
+        return state.songId
     },
 }
 

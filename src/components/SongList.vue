@@ -15,7 +15,7 @@
       </el-table-column>
       <el-table-column label="歌曲" width="200">
         <template v-slot="scope">
-          <div class="songName">
+          <div class="songName" @click="handleSongListInfo(scope.$index)">
             <router-link :to="{ path: 'about', query: { id: scope.row.id }}"
                          active-class="is-active">
               {{ scope.row.name }}
@@ -55,6 +55,8 @@
 </template>
 
 <script>
+import {mapMutations} from "vuex";
+
 export default {
   name: 'song-list',
   components: {},
@@ -68,7 +70,11 @@ export default {
   computed: {},
   // 方法集合
   methods: {
-
+    ...mapMutations(['getPlayListSongs', 'getPlayListIndex']),
+    handleSongListInfo(index) {
+      this.getPlayListIndex(index)
+      this.getPlayListSongs(this.albumSongsList)
+    },
   }
 }
 </script>

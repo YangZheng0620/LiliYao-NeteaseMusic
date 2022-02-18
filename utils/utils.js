@@ -65,3 +65,10 @@ export function returnSecond(time) {
     let s = parseInt(time[1]);
     return m * 60 + s;
 }
+
+export function formatSongTimeSec(duration = 0) {
+    // duration = duration / 1000
+    const m = (Math.floor(duration / 60) + '').padStart(2, '0')
+    const s = (Math.floor(duration % 60) + '').padStart(2, '0')
+    return `${m}:${s}`
+}
