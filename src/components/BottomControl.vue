@@ -1,5 +1,6 @@
 <template>
   <div class='bottom-control'>
+    <div class="placeholder"></div>
     <audio
         :src="getMusicUrl"
         @play="changeState(true)"
@@ -33,6 +34,7 @@
           <img
               :src="songDetail.al.picUrl"
               alt=""
+              @click="jumpToPlayer"
           />
           <!--        <img src="~assets/img/test.jpg" alt=""  />-->
         </div>
@@ -249,6 +251,10 @@ export default {
     SongEnd() {
       this.changeNewMusicAction(true)
     },
+    jumpToPlayer() {
+      let id = this.songId
+      this.$router.push({path:'about',query: {id:id}})
+    },
   },
   watch: {
   }
@@ -260,7 +266,7 @@ export default {
   /* background-color: pink; */
   border-top: 1px solid #ddd;
   width: 100%;
-  height: 55px;
+  height: 70px;
   position: fixed;
   bottom: 0;
   left: 0;
@@ -270,19 +276,21 @@ export default {
   padding: 6px 10px;
   z-index: 10000;
   background-color: #999999;
+
 }
 
 
 .bottom {
   display: flex;
   justify-content: space-between;
+  margin-top: 5px;
 }
 
 .left {
   display: flex;
-  align-items: center;
+  //align-items: center;
   width: 123px;
-
+  flex: 1;
   .avatar {
     width: 40px;
     height: 40px;
@@ -305,9 +313,9 @@ export default {
   .musicName {
     margin-bottom: 4px;
     width: 100%;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
+    //overflow: hidden;
+    //text-overflow: ellipsis;
+    //white-space: nowrap;
   }
 
   .singer {
@@ -329,12 +337,11 @@ export default {
   display: flex;
   flex-direction: column;
   align-items: center;
-
+  flex: 8;
   .buttons {
     display: flex;
     align-items: center;
     height: 13px;
-
     span {
       display: inline-block;
       width: 50px;
@@ -363,23 +370,24 @@ export default {
 
 .right {
   display: flex;
-  align-items: center;
+  //align-items: center;
   position: relative;
+  flex: 1;
 }
 
 .volumeControl {
   display: flex;
-  align-items: center;
+  //align-items: center;
   margin-right: 15px;
 }
 
 .icon-yinliang {
-  font-size: 18px;
+  font-size: 15px;
   margin-right: 7px;
 }
 
 .volumeSlider {
-  width: 55px;
+  width: 150px;
   z-index: 99;
 }
 
@@ -397,7 +405,7 @@ export default {
   overflow: hidden;
 
   .progressSlider {
-    width: 1300px;
+    width: 100%;
   }
 
   .currentTime,
@@ -408,8 +416,13 @@ export default {
     margin: 0 5px;
     width: 30px;
     text-align: center;
+    color: #333333;
   }
 
 }
 
+.placeholder {
+  width: 100%;
+  height: 30%;
+}
 </style>

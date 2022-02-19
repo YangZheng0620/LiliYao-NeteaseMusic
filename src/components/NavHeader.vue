@@ -88,18 +88,18 @@ export default {
         {
           id: 1,
           name: "发现音乐",
-          path: "/about",
+          path: "/index",
 
         },
         {
           id: 2,
           name: "排行榜",
-          path: "/demo",
+          path: "/about",
         },
         {
           id: 3,
           name: "歌单",
-          path: "/index",
+          path: "/about",
         },
         {
           id: 4,

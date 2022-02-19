@@ -33,11 +33,11 @@
           <span>播放：{{ $utils.formatCount(albumDescList.playCount) }}</span>
         </div>
         <div class="songDesc">
-          <el-collapse>
-            <el-collapse-item title="简介" name="1">
-              <div>{{ albumDescList.description }}</div>
-            </el-collapse-item>
-          </el-collapse>
+<!--          <el-collapse>-->
+<!--            <el-collapse-item title="简介" name="1">-->
+<!--              <div>{{ albumDescList.description }}</div>-->
+<!--            </el-collapse-item>-->
+<!--          </el-collapse>-->
 
         </div>
       </div>
@@ -223,12 +223,12 @@ export default {
 .header {
   display: flex;
   height: 300px;
-  background: #999999;
+  //background: #999999;
   .left {
     display: flex;
     align-items: center;
     width: 30%;
-    background: #00DBDE;
+    //background: #00DBDE;
     .cover {
       margin: 20px;
       border-radius: 6px;
@@ -236,7 +236,7 @@ export default {
   }
   .right {
     width: 70%;
-    background: #9599E2;
+    //background: #9599E2;
     padding: 30px;
     .title {
       display: flex;
@@ -299,7 +299,7 @@ export default {
 
 .songsList {
   height: 900px;
-  background: #8BC6EC;
+  //background: #8BC6EC;
   padding: 40px;
   // 标签总横线长度
   /deep/ .el-tabs__nav-wrap:after {

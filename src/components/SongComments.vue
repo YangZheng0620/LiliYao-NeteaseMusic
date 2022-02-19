@@ -3,7 +3,7 @@
     <!--    <div class='comments' v-infinite-scroll="load"-->
     <!--         infinite-scroll-disabled="disabled">-->
     <div class="comment_title">
-      <h2>评论</h2>
+      <h2 style="color: black">评论</h2>
       <em>共620条评论</em>
     </div>
     <!--    <div class="userInfo">-->

@@ -116,7 +116,7 @@ export default {
 
 
 .left {
-  background: #42b983;
+  //background: #42b983;
   height: 1000px;
   .hotAlbumMenu {
     img {
@@ -157,7 +157,7 @@ export default {
         .by {
           display: inline-block;
           font-size: 12px;
-          color: #999999;
+          //color: #999999;
           margin-right: 3px;
         }
         .nickname {
@@ -170,12 +170,12 @@ export default {
 }
 
 .middle {
-  background: #99a9bf;
+  //background: #99a9bf;
   height: 1000px;
 }
 
 .right {
-  background: #2c3e50;
+  //background: #2c3e50;
   height: 1000px;
 
 

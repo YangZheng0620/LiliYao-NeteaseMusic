@@ -1,6 +1,6 @@
 <template>
   <div class="song-item-v1">
-    <router-link :to="{ path: 'demo', query: { id: item.id }}" class="playListImg"
+    <router-link :to="{ path: 'album', query: { id: item.id }}" class="playListImg"
                  active-class="is-active">
       <el-image :src="item.coverImgUrl" lazy class="text">
         <div slot="placeholder" class="image-slot">

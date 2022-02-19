@@ -14,9 +14,9 @@
         <router-link to="/index" active-class="is-active">
           登录
         </router-link>
-        <router-link to="/demo" active-class="is-active">
-          注册
-        </router-link>
+<!--        <router-link to="/demo" active-class="is-active">-->
+<!--          注册-->
+<!--        </router-link>-->
       </div>
       <div class="loginModalBody" style="text-align:center">
         <el-form class="loginModalForm" ref="loginFormRef" :model="loginForm" :rules="loginFormRules">

@@ -3,10 +3,10 @@
     <el-backtop :bottom="60">
       <el-image class="back-top" :src="require('./assets/backTop.png')"></el-image>
     </el-backtop>
-    <div id="nav">
-      <router-link to="/">Home</router-link> |
-      <router-link to="/about">About</router-link>
-    </div>
+<!--    <div id="nav">-->
+<!--      <router-link to="/">Home</router-link> |-->
+<!--      <router-link to="/about">About</router-link>-->
+<!--    </div>-->
 
     <router-view/>
     <bottom-control></bottom-control>

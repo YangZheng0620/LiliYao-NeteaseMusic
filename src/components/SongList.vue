@@ -8,15 +8,15 @@
           {{ scope.$index }}
         </template>
       </el-table-column>
-      <el-table-column label="操作" width="80">
-        <template v-slot="scope">
-          {{ scope.$index }}
-        </template>
-      </el-table-column>
+<!--      <el-table-column label="操作" width="80">-->
+<!--        <template v-slot="scope">-->
+<!--          {{ scope.$index }}-->
+<!--        </template>-->
+<!--      </el-table-column>-->
       <el-table-column label="歌曲" width="200">
         <template v-slot="scope">
           <div class="songName" @click="handleSongListInfo(scope.$index)">
-            <router-link :to="{ path: 'about', query: { id: scope.row.id }}"
+            <router-link :to="{ path: 'song', query: { id: scope.row.id }}"
                          active-class="is-active">
               {{ scope.row.name }}
               <span class="songNameAlia" v-if="scope.row.alia[0]">({{ scope.row.alia[0] }})
