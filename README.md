@@ -58,7 +58,7 @@ LiliYao-NeteaseMusic（未完成版）
 
 
 ### 3. 项目源码与 API 接口
-- 项目 Github 地址：https://github.com/YangZheng0620/lili-yao-netease-music
+- 项目 Github 地址：https://github.com/YangZheng0620/LiliYao-NeteaseMusic
 - 项目 Gitee 地址：https://gitee.com/YangZheng0620/lili-yao-netease-music
 - API 接口：https://binaryify.github.io/NeteaseCloudMusicApi/#/
 
