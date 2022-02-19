@@ -1,4 +1,4 @@
-# Vue PC端云音乐项目
+# Vue PC 端云音乐项目
 
 ### 1. 项目介绍
 LiliYao-NeteaseMusic（未完成版）
